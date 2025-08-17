@@ -1,4 +1,5 @@
 # tabs/vocab_tab.py
+import os
 
 import gradio as gr
 from agents.vocab_agent import VocabAgent
@@ -10,11 +11,12 @@ vocab_agent = VocabAgent()
 # 定义功能名称为“vocab_study”，表示词汇学习模块
 feature = "vocab_study"
 
+base_path = os.path.join(os.path.dirname(__file__), "../../")
 # 获取页面描述，从指定的 markdown 文件中读取介绍内容
 def get_page_desc(feature):
     try:
         # 打开指定的 markdown 文件来读取词汇学习介绍
-        with open(f"content/page/{feature}.md", "r", encoding="utf-8") as file:
+        with open(f"{base_path}content/page/{feature}.md", "r", encoding="utf-8") as file:
             scenario_intro = file.read().strip()  # 去除多余空白
         return scenario_intro
     except FileNotFoundError:
@@ -34,13 +36,23 @@ def restart_vocab_study_chatbot():
     return gr.Chatbot(
         value=[(_next_round, bot_message)],
         height=800,  # 设置聊天机器人组件的高度
+        type="messages"
     )
 
 # 处理用户输入的单词学习消息，并与词汇代理互动获取机器人的响应
 def handle_vocab(user_input, chat_history):
     bot_message = vocab_agent.chat_with_history(user_input)  # 获取机器回复
     LOG.info(f"[Vocab ChatBot]: {bot_message}")  # 记录机器人回应信息
-    return bot_message
+    return {"role": "assistant", "content": bot_message}
+
+def handle_retry(history, retry_data: gr.RetryData):
+    return history
+
+def handle_undo(history, undo_data: gr.UndoData):
+    return history
+
+def handle_clear():
+    return []
 
 # 创建词汇学习的 Tab 界面
 def create_vocab_tab():
@@ -55,6 +67,7 @@ def create_vocab_tab():
         vocab_study_chatbot = gr.Chatbot(
             placeholder="<strong>你的英语私教 DjangoPeng</strong><br><br>开始学习新单词吧！",
             height=800,
+            type="messages"
         )
 
         # 创建一个按钮，用于重置词汇学习状态，值为“下一关”
@@ -67,12 +80,13 @@ def create_vocab_tab():
             outputs=vocab_study_chatbot,
         )
 
+        vocab_study_chatbot.retry(handle_retry, vocab_study_chatbot, vocab_study_chatbot)
+        vocab_study_chatbot.undo(handle_undo, vocab_study_chatbot, vocab_study_chatbot)
+        vocab_study_chatbot.clear(handle_clear, outputs=vocab_study_chatbot)
         # 创建聊天接口，包含处理用户消息的函数，并关联聊天机器人组件
         gr.ChatInterface(
             fn=handle_vocab,  # 处理用户输入的函数
             chatbot=vocab_study_chatbot,  # 关联的聊天机器人组件
-            retry_btn=None,  # 不显示重试按钮
-            undo_btn=None,  # 不显示撤销按钮
-            clear_btn=None,  # 学习下一批新单词按钮
-            submit_btn="发送",  # 发送按钮的文本
+            submit_btn="发送",
+            type="messages"
         )

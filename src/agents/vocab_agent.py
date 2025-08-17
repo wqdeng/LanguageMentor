@@ -1,8 +1,12 @@
+import os
+
 from langchain_core.messages import AIMessage  # 导入 AI 消息类
 
 from .session_history import get_session_history  # 导入用于处理会话历史的方法
 from .agent_base import AgentBase  # 导入基础代理类
 from utils.logger import LOG  # 导入日志记录模块
+
+base_path = os.path.join(os.path.dirname(__file__), "../../")
 
 class VocabAgent(AgentBase):
     """
@@ -13,7 +17,7 @@ class VocabAgent(AgentBase):
         # 调用父类的构造函数，初始化代理名称、提示文件路径以及可选的会话 ID
         super().__init__(
             name="vocab_study",  # 定义代理的名称
-            prompt_file="prompts/vocab_study_prompt.txt",  # 提示词文件的路径
+            prompt_file=f"{base_path}prompts/vocab_study_prompt.txt",  # 提示词文件的路径
             session_id=session_id  # 会话唯一标识符，默认为 None
         )
 

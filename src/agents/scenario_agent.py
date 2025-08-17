@@ -1,3 +1,4 @@
+import os
 import random
 
 from langchain_core.messages import AIMessage  # 导入消息类
@@ -6,14 +7,15 @@ from .session_history import get_session_history  # 导入会话历史相关方�
 from .agent_base import AgentBase
 from utils.logger import LOG
 
+base_path = os.path.join(os.path.dirname(__file__), "../../")
 
 class ScenarioAgent(AgentBase):
     """
     场景代理类，负责处理特定场景下的对话。
     """
     def __init__(self, scenario_name, session_id=None):
-        prompt_file = f"prompts/{scenario_name}_prompt.txt"
-        intro_file = f"content/intro/{scenario_name}.json"
+        prompt_file = f"{base_path}prompts/{scenario_name}_prompt.txt"
+        intro_file = f"{base_path}content/intro/{scenario_name}.json"
         super().__init__(
             name=scenario_name,
             prompt_file=prompt_file,

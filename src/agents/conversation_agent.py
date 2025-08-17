@@ -1,8 +1,12 @@
+import os
+
 from langchain_core.messages import AIMessage  # 导入消息类
 
 from .session_history import get_session_history  # 导入会话历史相关方法
 from .agent_base import AgentBase
 from utils.logger import LOG
+
+base_path = os.path.join(os.path.dirname(__file__), "../../")
 
 class ConversationAgent(AgentBase):
     """
@@ -11,6 +15,6 @@ class ConversationAgent(AgentBase):
     def __init__(self, session_id=None):
         super().__init__(
             name="conversation",
-            prompt_file="prompts/conversation_prompt.txt",
+            prompt_file=f"{base_path}prompts/conversation_prompt.txt",
             session_id=session_id
         )
