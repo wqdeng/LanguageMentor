@@ -41,15 +41,14 @@ with gr.Blocks(title="LanguageMentor 英语私教") as language_mentor_app:
         conversation_chatbot = gr.Chatbot(
             placeholder="<strong>你的英语私教 DjangoPeng</strong><br><br>想和我聊什么话题都可以，记得用英语哦！",
             height=800,
+            type="messages"
         )
 
         gr.ChatInterface(
             fn=handle_conversation, 
             chatbot=conversation_chatbot,
-            retry_btn=None,
-            undo_btn=None,
-            clear_btn="清除历史记录",
             submit_btn="发送",
+            type="messages"
         )
 
     with gr.Tab("场景训练"):
@@ -58,6 +57,7 @@ with gr.Blocks(title="LanguageMentor 英语私教") as language_mentor_app:
         scenario_chatbot = gr.Chatbot(
             placeholder="<strong>你的英语私教 DjangoPeng</strong><br><br>选择场景后开始对话吧！",
             height=800,
+            type="messages"
         )
         
         # 场景聊天界面
@@ -65,10 +65,8 @@ with gr.Blocks(title="LanguageMentor 英语私教") as language_mentor_app:
             fn=handle_scenario,
             chatbot=scenario_chatbot,
             additional_inputs=scenario_dropdown,
-            retry_btn=None,
-            undo_btn=None,
-            clear_btn="清除历史记录",
             submit_btn="发送",
+            type="messages"
         )
 
 if __name__ == "__main__":
